@@ -71,6 +71,18 @@ img {
     transform: translateY(-2px);
 }
 
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
+
+.btn-secondary:hover {
+    background-color: var(--text-muted);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
 /* Header */
 .header {
     position: fixed;
@@ -1008,6 +1020,11 @@ img {
 .checkout-btn {
     width: 100%;
     margin-top: 20px;
+}
+
+.empty-cart-btn {
+    width: 100%;
+    margin-top: 10px;
 }
 
 @media (max-width: 768px) {

@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = window.cart = {
         items: JSON.parse(localStorage.getItem('luxeCart')) || [],
 
-        save() {
+        save(shouldRender = true) {
             localStorage.setItem('luxeCart', JSON.stringify(this.items));
             this.updateCount();
             this.render();
@@ -55,24 +55,39 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 this.items.push({ ...product, quantity: 1 });
             }
-            this.save();
+            this.save(false); // Save without re-rendering everything immediately
         },
 
         remove(id) {
-            this.items = this.items.filter(item => item.id !== id);
+            this.items = this.items.filter(item => item.id !== parseInt(id));
             this.save();
         },
 
-        updateQuantity(id, change) {
-            const item = this.items.find(item => item.id === id);
+        increment(id) {
+            const parsedId = parseInt(id);
+            const item = this.items.find(item => item.id === parsedId);
             if (item) {
-                item.quantity += change;
+                item.quantity++;
+                this.save();
+            }
+        },
+
+        decrement(id) {
+            const parsedId = parseInt(id);
+            const item = this.items.find(item => item.id === parsedId);
+            if (item) {
+                item.quantity--;
                 if (item.quantity <= 0) {
-                    this.remove(id);
+                    this.remove(parsedId);
                 } else {
                     this.save();
                 }
             }
+        },
+
+        emptyCart() {
+            this.items = [];
+            this.save();
         },
 
         updateCount() {
@@ -119,27 +134,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
                 totalEl.textContent = `$${subtotal.toFixed(2)}`;
 
-                // Re-attach listeners
-                this.attachListeners();
             }
         },
 
+        init() {
+            this.updateCount();
+            this.render();
+            this.attachListeners();
+        },
+
         attachListeners() {
-            document.querySelectorAll('.qty-btn.plus').forEach(btn => {
-                btn.onclick = () => this.updateQuantity(btn.dataset.id, 1);
+            const cartItemsContainer = document.querySelector('.cart-items');
+            if (!cartItemsContainer) return;
+
+            cartItemsContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('.qty-btn, .remove-btn');
+                if (!target) return;
+
+                const id = target.dataset.id;
+                if (target.classList.contains('plus')) {
+                    this.increment(id);
+                } else if (target.classList.contains('minus')) {
+                    this.decrement(id);
+                } else if (target.classList.contains('remove-btn')) {
+                    this.remove(id);
+                }
             });
-            document.querySelectorAll('.qty-btn.minus').forEach(btn => {
-                btn.onclick = () => this.updateQuantity(btn.dataset.id, -1);
-            });
-            document.querySelectorAll('.remove-btn').forEach(btn => {
-                btn.onclick = () => this.remove(btn.dataset.id);
-            });
+
+            const emptyCartBtn = document.querySelector('.empty-cart-btn');
+            if (emptyCartBtn) {
+                emptyCartBtn.addEventListener('click', () => this.emptyCart());
+            }
         }
     };
 
     // Initialize Cart
-    cart.updateCount();
-    cart.render();
+    cart.init();
 
     let allProducts = []; // To store all products for searching
 
