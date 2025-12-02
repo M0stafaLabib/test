@@ -173,8 +173,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allProducts = []; // To store all products for searching
     let currentPage = 1;
-    const productsPerPage = 9;
     let currentFilteredProducts = [];
+
+    // Items per page control (default 9). Persist in localStorage.
+    const itemsPerPageSelect = document.getElementById('items-per-page');
+    let productsPerPage = 9;
+    if (itemsPerPageSelect) {
+        const saved = localStorage.getItem('luxeItemsPerPage');
+        if (saved) {
+            itemsPerPageSelect.value = saved;
+            productsPerPage = parseInt(saved, 10) || 9;
+        } else {
+            productsPerPage = parseInt(itemsPerPageSelect.value, 10) || 9;
+        }
+
+        itemsPerPageSelect.addEventListener('change', (e) => {
+            const v = parseInt(e.target.value, 10) || 9;
+            productsPerPage = v;
+            localStorage.setItem('luxeItemsPerPage', String(v));
+            currentPage = 1;
+            renderPage(currentFilteredProducts);
+        });
+    }
 
     // Load Products
     async function loadProducts() {
