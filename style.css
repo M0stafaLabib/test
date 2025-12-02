@@ -326,6 +326,36 @@ img {
     gap: 30px;
 }
 
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    background-color: var(--secondary-color);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+    font-family: var(--font-main);
+}
+
+.pagination-btn:hover,
+.pagination-btn.active {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
 .product-card {
     background-color: var(--secondary-color);
     border-radius: 15px;
