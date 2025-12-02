@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allProducts = []; // To store all products for searching
     let currentPage = 1;
-    const productsPerPage = 8;
+    const productsPerPage = 9;
     let currentFilteredProducts = [];
 
     // Load Products
@@ -275,6 +275,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (totalPages <= 1) return;
 
+        const createPaginationButton = (content, page, isDisabled = false) => {
+            const btn = document.createElement('button');
+            btn.innerHTML = content;
+            btn.classList.add('pagination-btn');
+            btn.disabled = isDisabled;
+            btn.addEventListener('click', () => {
+                currentPage = page;
+                renderPage(products);
+                document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+            });
+            return btn;
+        };
+
+        // First Page Button
+        paginationContainer.appendChild(
+            createPaginationButton('&laquo;', 1, currentPage === 1)
+        );
+
+        // Previous Page Button
+        paginationContainer.appendChild(
+            createPaginationButton('&lsaquo;', currentPage - 1, currentPage === 1)
+        );
+
+        // Numbered Page Buttons
         for (let i = 1; i <= totalPages; i++) {
             const btn = document.createElement('button');
             btn.textContent = i;
@@ -285,11 +309,20 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 currentPage = i;
                 renderPage(products);
-                // Scroll to the top of the product grid
                 document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
             });
             paginationContainer.appendChild(btn);
         }
+
+        // Next Page Button
+        paginationContainer.appendChild(
+            createPaginationButton('&rsaquo;', currentPage + 1, currentPage === totalPages)
+        );
+
+        // Last Page Button
+        paginationContainer.appendChild(
+            createPaginationButton('&raquo;', totalPages, currentPage === totalPages)
+        );
     }
 
     // Search Logic
